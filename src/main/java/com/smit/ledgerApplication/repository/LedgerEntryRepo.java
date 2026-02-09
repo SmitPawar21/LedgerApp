@@ -13,6 +13,8 @@ import com.smit.ledgerApplication.model.LedgerEntry;
 @Repository
 public interface LedgerEntryRepo extends JpaRepository<LedgerEntry, UUID> {
 	
-	@Query("SELECT COALESCE(SUM(l.amount), 0) FROM ledger_entries l where l.account_id = :id")
+	@Query("SELECT COALESCE(SUM(l.amount), 0) FROM LedgerEntry l where l.account.id = :id")
 	BigDecimal calculateBalanceByAccountId(@Param("id") UUID id);
+	
+	boolean existsByIdempotencyKey(String idempotencyKey);
 }

@@ -35,14 +35,25 @@ public class Account {
 	@Column(name="created_at", updatable=false)
 	private OffsetDateTime createdAt;
 	
+	private OffsetDateTime lastUpdatedAt;
+	
+	public OffsetDateTime getLastUpdatedAt() {
+		return lastUpdatedAt;
+	}
+
+	public void setLastUpdatedAt(OffsetDateTime lastUpdatedAt) {
+		this.lastUpdatedAt = lastUpdatedAt;
+	}
+
 	public Account() {}
 
-	public Account(UUID id, String ownerName, Long version, OffsetDateTime createdAt) {
+	public Account(UUID id, String ownerName, Long version, OffsetDateTime createdAt, OffsetDateTime lastUpdatedAt) {
 		super();
 		this.id = id;
 		this.ownerName = ownerName;
 		this.version = version;
 		this.createdAt = createdAt;
+		this.lastUpdatedAt = lastUpdatedAt;
 	}
 
 	public UUID getId() {
