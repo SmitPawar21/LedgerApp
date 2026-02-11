@@ -5,6 +5,7 @@ import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import com.smit.ledgerApplication.common.dto.TransferRequest;
+import com.smit.ledgerApplication.common.exception.DuplicateTransactionException;
 import com.smit.ledgerApplication.common.exception.InsufficientFundsException;
 import com.smit.ledgerApplication.model.Account;
 import com.smit.ledgerApplication.model.LedgerEntry;
@@ -33,7 +34,9 @@ public class LedgerService {
 	@Transactional
 	public void transfer(TransferRequest transferRequest) {	
 		if (ledgerEntryRepo.existsByIdempotencyKey(transferRequest.getIdempotencyKey())) {
-	        return; // Or throw a custom DuplicateTransactionException
+	        throw new DuplicateTransactionException(
+	        		"Same idempotency key detected. Concurrent Updation. Try again."
+	        		);
 	    }
 		
 		Account source = accountRepo.findByIdWithLock(transferRequest.getFromAccountId())
