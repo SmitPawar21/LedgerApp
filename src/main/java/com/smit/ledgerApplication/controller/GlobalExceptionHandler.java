@@ -2,10 +2,12 @@ package com.smit.ledgerApplication.controller;
 
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.smit.ledgerApplication.common.exception.DuplicateTransactionException;
 import com.smit.ledgerApplication.common.exception.InsufficientFundsException;
 
 import java.time.LocalDateTime;
@@ -40,4 +42,18 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.CONFLICT)
                 .body(errorResponse);
     }
+    
+    @ExceptionHandler(DuplicateTransactionException.class)
+    public ResponseEntity<Map<String, Object>> handleDuplicateTransactionFailure(DuplicateTransactionException ex) {
+    	Map<String, Object> errorResponse = new HashMap<>();
+    	errorResponse.put("timestamp", LocalDateTime.now());
+    	errorResponse.put("status", HttpStatus.CONFLICT.value());
+    	errorResponse.put("error", "Duplicate Transfer Failure");
+    	errorResponse.put("message", "Same idempotency key detected. Concurrent Updation. Try again.");
+    	
+    	return ResponseEntity
+    			.status(HttpStatus.CONFLICT)
+    			.body(errorResponse);
+    }
 }
+
